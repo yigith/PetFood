@@ -1,0 +1,6 @@
+## RUN THE FOLLOWING C0MMANDS ON THE PROJECT "Infrastructure"
+
+Add-Migration InitialModel -Context Infrastructure.Data.PetFoodContext -OutputDir "Data\Migrations"
+Update-Database -Context Infrastructure.Data.PetFoodContext
+Add-Migration InitialIdentityModel -Context Infrastructure.Identity.AppIdentityDbContext -OutputDir "Identity\Migrations"
+Update-Database -Context Infrastructure.Identity.AppIdentityDbContext
