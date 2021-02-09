@@ -15,7 +15,7 @@ namespace Infrastructure.Data.Config
         {
             builder.Property(x => x.Name)
                 .IsRequired(true)
-                .HasMaxLength(50);
+                .HasMaxLength(100);
 
             builder.Property(x => x.PictureUri)
                 .IsRequired(true);

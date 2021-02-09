@@ -1,3 +1,4 @@
+using ApplicationCore.Interfaces;
 using Infrastructure.Data;
 using Infrastructure.Identity;
 using Microsoft.AspNetCore.Builder;
@@ -13,6 +14,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Web.Interfaces;
+using Web.Services;
 
 namespace Web
 {
@@ -41,6 +44,9 @@ namespace Web
                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<AppIdentityDbContext>();
             services.AddControllersWithViews();
+
+            services.AddScoped(typeof(IAsyncRepository<>), typeof(EFRepository<>));
+            services.AddScoped<IHomeIndexViewModelService, HomeIndexViewModelService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
