@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace ApplicationCore.Interfaces
 {
-    interface IAsyncRepository<T> where T: BaseEntity
+    public interface IAsyncRepository<T> where T: BaseEntity
     {
         Task<T> GetByIdAsync(int id);
         Task<List<T>> ListAllAsync();
@@ -17,8 +17,8 @@ namespace ApplicationCore.Interfaces
         Task UpdateAsync(T entity);
         Task DeleteAsync(T entity);
         Task<int> CountAsync(ISpecification<T> spec);
-        Task<T> First(ISpecification<T> spec);
-        Task<T> FirstOrDefault(ISpecification<T> spec);
+        Task<T> FirstAsync(ISpecification<T> spec);
+        Task<T> FirstOrDefaultAsync(ISpecification<T> spec);
 
 
 
