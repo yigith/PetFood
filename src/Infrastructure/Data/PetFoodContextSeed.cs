@@ -15,13 +15,16 @@ namespace Infrastructure.Data
             if (!await petFoodContext.Categories.AnyAsync())
             {
                 await petFoodContext.Categories.AddAsync(new Category() { Name = "Cat Food" });
+                await petFoodContext.SaveChangesAsync();
                 await petFoodContext.Categories.AddAsync(new Category() { Name = "Dog Food" });
                 await petFoodContext.SaveChangesAsync();
             }
             if (!await petFoodContext.Brands.AnyAsync())
             {
                 await petFoodContext.Brands.AddAsync(new Brand() { Name = "Pro Plan" });
+                await petFoodContext.SaveChangesAsync();
                 await petFoodContext.Brands.AddAsync(new Brand() { Name = "Royal Canin" });
+                await petFoodContext.SaveChangesAsync();
                 await petFoodContext.Brands.AddAsync(new Brand() { Name = "Purina" });
                 await petFoodContext.SaveChangesAsync();
             }
