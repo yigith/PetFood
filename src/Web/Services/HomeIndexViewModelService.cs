@@ -42,10 +42,14 @@ namespace Web.Services
             }).ToList();
         }
 
-        public async Task<HomeIndexViewModel> GetHomeIndexViewModel(int? categoryId, int? brandId)
+        public async Task<HomeIndexViewModel> GetHomeIndexViewModel(int? categoryId, int? brandId, int pageId)
         {
-            var spec = new ProductFilterPaginatedSpecification(categoryId, brandId);
+            var spec = new ProductFilterPaginatedSpecification(categoryId, brandId, (pageId - 1) * Constants.ITEMS_PER_PAGE, Constants.ITEMS_PER_PAGE);
+            var specAll = new ProductFilterSpecification(categoryId, brandId);
+
             var products = await _productRepository.ListAsync(spec);
+            var allCount = await _productRepository.CountAsync(specAll);
+            var totalPages = (int)Math.Ceiling(allCount / (double)Constants.ITEMS_PER_PAGE);
 
             return new HomeIndexViewModel()
             {
@@ -57,7 +61,16 @@ namespace Web.Services
                     PictureUri = x.PictureUri
                 }).ToList(),
                 Categories = await GetCategoryListItems(),
-                Brands = await GetBrandListItems()
+                Brands = await GetBrandListItems(),
+                PaginationInfo = new PaginationInfoViewModel()
+                {
+                    ItemsOnPage = products.Count,
+                    TotalItems = allCount,
+                    CurrentPage = pageId,
+                    TotalPages = totalPages,
+                    HasPrevious = pageId > 1,
+                    HasNext = pageId < totalPages
+                }
             };
         }
     }

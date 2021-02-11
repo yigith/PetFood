@@ -8,13 +8,12 @@ using System.Threading.Tasks;
 
 namespace ApplicationCore.Specifications
 {
-    public class ProductFilterPaginatedSpecification : Specification<Product>
+    public class ProductFilterSpecification : Specification<Product>
     {
-        public ProductFilterPaginatedSpecification(int? categoryId, int? brandId, int skip, int take) : base()
+        public ProductFilterSpecification(int? categoryId, int? brandId) : base()
         {
             Query.Where(x => (!categoryId.HasValue || x.CategoryId == categoryId) 
-                                && (!brandId.HasValue || x.BrandId == brandId))
-                .Skip(skip).Take(take);
+                                && (!brandId.HasValue || x.BrandId == brandId));
         }
     }
 }
