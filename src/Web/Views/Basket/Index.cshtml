@@ -1,0 +1,42 @@
+﻿
+@{ 
+    ViewBag.Title = "Basket";
+}
+<h1>Basket</h1>
+
+<div class="row">
+    <div class="col-md-8">
+        <table class="table table-basket">
+            <tbody>
+                <tr>
+                    <td>
+                        <img src="~/images/samples/1.png" alt="" width="50" height="50" />
+                    </td>
+                    <td>
+                        Product Name
+                    </td>
+                    <td>
+                        <input type="number" class="form-control quantity" min="0" size="3" value="1" />
+                    </td>
+                    <td>
+                        $549.00
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="col-md-4">
+        <div class="card py-3 bg-light">
+            <div class="card-body">
+                <div class="display-1 text-center py-2"s>
+                    <i class="fas fa-shopping-basket"></i>
+                </div>
+                <h2 class="text-center mb-5 mt-3">
+                    Total: $549.00
+                </h2>
+                <a asp-controller="Home" asp-action="Index" class="btn btn-warning btn-block">Continue to Shopping</a>
+                <a asp-controller="Basket" asp-action="Checkout" class="btn btn-success btn-block">Proceed to Checkout</a>
+            </div>
+        </div>
+    </div>
+</div>

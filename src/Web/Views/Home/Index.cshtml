@@ -23,12 +23,13 @@
                 <img src="~/images/@product.PictureUri" class="card-img-top" alt="@product.Name">
                 <div class="card-body">
                     <p class="home-product-name">@product.Name</p>
-                    <div class="d-flex align-items-baseline">
+                    <form method="post" class="d-flex align-items-baseline" data-add-to-basket="">
                         <p class="home-product-price">$@product.Price.ToString("n2")</p>
-                        <a href="#" class="btn btn-success card-link float-right ml-auto">
+                        <input type="hidden" name="id" value="@product.Id" />
+                        <button type="submit" class="btn btn-success card-link ml-auto">
                             <i class="fas fa-cart-plus"></i>
-                        </a>
-                    </div>
+                        </button>
+                    </form>
                 </div>
             </div>
         </div>
@@ -39,6 +40,21 @@
 
 @section scripts {
     <script>
+        $("form[data-add-to-basket]").submit(function (event) {
+            event.preventDefault();
+            var frm = this;
+
+            $.ajax({
+                type: "post",
+                url: "@Url.Action("AddToBasket", "Basket")",
+                data: $(frm).serialize(),
+                success: function (data) {
+                    toastr.success("The selected product has been successfully added to the basket.")
+                    $("[data-basket-item-count]").text(data.basketItemCount);
+                }
+            });
+        });
+
         $("#BrandId, #CategoryId").change(function () {
             $(this).closest("form").submit();
         });

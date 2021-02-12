@@ -80,3 +80,12 @@ body {
     font-size: 120%;
     margin-bottom: 0;
 }
+
+/* BASKET */
+.table-basket td {
+    vertical-align: baseline;
+}
+
+.form-control.quantity {
+    width: 80px;
+}
