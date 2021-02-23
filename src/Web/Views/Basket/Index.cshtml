@@ -1,4 +1,4 @@
-﻿
+﻿@model BasketViewModel
 @{ 
     ViewBag.Title = "Basket";
 }
@@ -8,20 +8,23 @@
     <div class="col-md-8">
         <table class="table table-basket">
             <tbody>
+                @foreach (var item in Model.Items)
+                {
                 <tr>
                     <td>
-                        <img src="~/images/samples/1.png" alt="" width="50" height="50" />
+                        <img src="~/images/@item.PictureUri" alt="" width="50" height="50" />
                     </td>
                     <td>
-                        Product Name
+                        @item.ProductName
                     </td>
                     <td>
-                        <input type="number" class="form-control quantity" min="0" size="3" value="1" />
+                        <input type="number" class="form-control quantity" min="0" size="3" value="@item.Quantity" />
                     </td>
                     <td>
-                        $549.00
+                        @string.Format("${0:0.00}", item.Quantity * item.UnitPrice)
                     </td>
                 </tr>
+                }
             </tbody>
         </table>
     </div>
@@ -32,7 +35,7 @@
                     <i class="fas fa-shopping-basket"></i>
                 </div>
                 <h2 class="text-center mb-5 mt-3">
-                    Total: $549.00
+                    Total: @string.Format("${0:0.00}", Model.Total())
                 </h2>
                 <a asp-controller="Home" asp-action="Index" class="btn btn-warning btn-block">Continue to Shopping</a>
                 <a asp-controller="Basket" asp-action="Checkout" class="btn btn-success btn-block">Proceed to Checkout</a>

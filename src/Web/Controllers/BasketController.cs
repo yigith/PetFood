@@ -26,9 +26,10 @@ namespace Web.Controllers
             _basketService = basketService;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            string userId = GetOrCreateUserId();
+            return View(await _basketViewModelService.GetBasket(userId));
         }
 
         [HttpPost, ValidateAntiForgeryToken]
