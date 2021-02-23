@@ -1,4 +1,5 @@
-﻿using Infrastructure.Identity;
+﻿using ApplicationCore.Interfaces;
+using Infrastructure.Identity;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -16,11 +17,13 @@ namespace Web.Controllers
     {
         private readonly IBasketViewModelService _basketViewModelService;
         private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly IBasketService _basketService;
 
-        public BasketController(IBasketViewModelService basketViewModelService, SignInManager<ApplicationUser> signInManager)
+        public BasketController(IBasketViewModelService basketViewModelService, SignInManager<ApplicationUser> signInManager, IBasketService basketService)
         {
             _basketViewModelService = basketViewModelService;
             _signInManager = signInManager;
+            _basketService = basketService;
         }
 
         public IActionResult Index()
@@ -29,21 +32,25 @@ namespace Web.Controllers
         }
 
         [HttpPost, ValidateAntiForgeryToken]
-        public IActionResult AddToBasket(int id, int quantity = 1)
+        public async Task<IActionResult> AddToBasket(int id, int quantity = 1)
         {
             // get product details
-            var product = _basketViewModelService.GetProductDetails(id);
+            var product = await _basketViewModelService.GetProductDetails(id);
 
             // get/create user id
             string userId = GetOrCreateUserId();
 
-            // todo: create basket if not exists and get basket id
+            // create basket if not exists and get basket id
+            int basketId;
+            if (!await _basketService.BasketExistsAsync(userId))
+                basketId = await _basketService.CreateBasketAsync(userId);
+            else
+                basketId = await _basketService.GetBasketIdAsync(userId);
 
-            // todo: add item to the basket
+            // add item to the basket
+            int count = await _basketService.AddItemToBasketAsync(basketId, product.Id, product.Price, quantity);
 
-            // todo: get current basket item count
-
-            return Json(new { BasketItemCount = new Random().Next(100) });
+            return Json(new { BasketItemCount = count });
         }
 
         private string GetOrCreateUserId()

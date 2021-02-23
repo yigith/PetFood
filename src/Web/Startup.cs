@@ -1,4 +1,5 @@
 using ApplicationCore.Interfaces;
+using ApplicationCore.Services;
 using Infrastructure.Data;
 using Infrastructure.Identity;
 using Microsoft.AspNetCore.Builder;
@@ -46,6 +47,7 @@ namespace Web
             services.AddControllersWithViews();
 
             services.AddScoped(typeof(IAsyncRepository<>), typeof(EFRepository<>));
+            services.AddScoped<IBasketService, BasketService>();
             services.AddScoped<IHomeIndexViewModelService, HomeIndexViewModelService>();
             services.AddScoped<IBasketViewModelService, BasketViewModelService>();
         }
