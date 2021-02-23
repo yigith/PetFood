@@ -75,10 +75,58 @@ namespace ApplicationCore.Services
             return basket.Id;
         }
 
+        public async Task DeleteBasketAsync(int basketId)
+        {
+            var basket = await _basketRepository.GetByIdAsync(basketId);
+            await _basketRepository.DeleteAsync(basket);
+        }
+
         public async Task<int> GetBasketIdAsync(string buyerId)
         {
             var basket = await _basketRepository.FirstAsync(new BasketExistsSpecification(buyerId));
             return basket.Id;
+        }
+
+        public async Task TransferBasketAsync(string anonymousId, string userId)
+        {
+            // get anonymous basket
+            var specAnon = new BasketWithItemsSpecification(anonymousId);
+            var anonBasket = await _basketRepository.FirstOrDefaultAsync(specAnon);
+            if (anonBasket == null)
+                return; // there is no anonymous basket to transfer from
+
+            // get or create user basket
+            var specUser = new BasketWithItemsSpecification(userId);
+            var userBasket = await _basketRepository.FirstOrDefaultAsync(specUser);
+            if (userBasket == null)
+            {
+                userBasket = new Basket() { BuyerId = userId, Items = new List<BasketItem>() };
+                await _basketRepository.AddAsync(userBasket);
+            }
+
+            // transfer items
+            foreach (var basketItem in anonBasket.Items)
+            {
+                var userBasketItem = userBasket.Items.FirstOrDefault(x => x.ProductId == basketItem.ProductId);
+
+                if (userBasketItem != null)
+                {
+                    userBasketItem.Quantity += basketItem.Quantity;
+                }
+                else
+                {
+                    userBasket.Items.Add(new BasketItem()
+                    {
+                        ProductId = basketItem.ProductId,
+                        Quantity = basketItem.Quantity,
+                        UnitPrice = basketItem.UnitPrice
+                    });
+                }
+            }
+            await _basketRepository.UpdateAsync(userBasket);
+
+            // delete anonymous basket
+            await DeleteBasketAsync(anonBasket.Id);
         }
     }
 }
