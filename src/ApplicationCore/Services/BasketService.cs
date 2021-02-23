@@ -12,10 +12,12 @@ namespace ApplicationCore.Services
     public class BasketService : IBasketService
     {
         private readonly IAsyncRepository<Basket> _basketRepository;
+        private readonly IAsyncRepository<BasketItem> _basketItemRepository;
 
-        public BasketService(IAsyncRepository<Basket> basketRepository)
+        public BasketService(IAsyncRepository<Basket> basketRepository, IAsyncRepository<BasketItem> basketItemRepository)
         {
             _basketRepository = basketRepository;
+            _basketItemRepository = basketItemRepository;
         }
 
         public async Task<int> AddItemToBasketAsync(int basketId, int productId, decimal price, int quantity = 1)
@@ -54,6 +56,16 @@ namespace ApplicationCore.Services
         public async Task<bool> BasketExistsAsync(string buyerId)
         {
             return await _basketRepository.CountAsync(new BasketExistsSpecification(buyerId)) > 0;
+        }
+
+        public async Task<int> BasketItemsCount(string buyerId)
+        {
+            if (!await BasketExistsAsync(buyerId))
+                return 0;
+
+            var basketId = await GetBasketIdAsync(buyerId);
+            var spec = new BasketItemsSpecification(basketId);
+            return await _basketItemRepository.CountAsync(spec);
         }
 
         public async Task<int> CreateBasketAsync(string buyerId)
