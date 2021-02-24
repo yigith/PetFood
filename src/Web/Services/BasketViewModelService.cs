@@ -40,7 +40,7 @@ namespace Web.Services
             var basketProducts = await _productRepository.ListAsync(new ProductsSpecification(productIds));
 
             vm.Id = basket.Id;
-            vm.Items = basket.Items.Select(x => 
+            vm.Items = basket.Items.Select(x =>
             {
                 var product = basketProducts.First(p => p.Id == x.ProductId);
                 return new BasketItemViewModel()
@@ -75,11 +75,16 @@ namespace Web.Services
             var basket = await _basketRepository.FirstOrDefaultAsync(new BasketWithItemsSpecification(userId));
             var basketItem = basket.Items.FirstOrDefault(x => x.ProductId == productId);
             basketItem.Quantity = quantity;
+
+            if (quantity == 0)
+                basket.Items.Remove(basketItem);
+            
             await _basketRepository.UpdateAsync(basket);
             return new BasketUpdateQuantityViewModel()
             {
                 ProductPrice = string.Format("${0:0.00}", basketItem.UnitPrice * basketItem.Quantity),
-                TotalPrice = string.Format("${0:0.00}", basket.Items.Sum(x => x.UnitPrice * x.Quantity))
+                TotalPrice = string.Format("${0:0.00}", basket.Items.Sum(x => x.UnitPrice * x.Quantity)),
+                BasketItemsCount = basket.Items.Count
             };
         }
     }

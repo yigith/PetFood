@@ -9,5 +9,6 @@ namespace Web.ViewModels
     {
         public string ProductPrice { get; set; }
         public string TotalPrice { get; set; }
+        public int BasketItemsCount { get; set; }
     }
 }
