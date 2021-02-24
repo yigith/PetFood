@@ -61,6 +61,11 @@ namespace Web.Controllers
             return Json(await _basketViewModelService.UpdateQuantity(userId, productId, quantity));
         }
 
+        public async Task<IActionResult> Checkout()
+        {
+            return View();
+        }
+
         private string GetOrCreateUserId()
         {
             if (_signInManager.IsSignedIn(User))

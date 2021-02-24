@@ -13,6 +13,14 @@ namespace Infrastructure.Data.Config
     {
         public void Configure(EntityTypeBuilder<Order> builder)
         {
+            builder.Property(x => x.FirstName)
+                .IsRequired()
+                .HasMaxLength(50);
+
+            builder.Property(x => x.LastName)
+                .IsRequired()
+                .HasMaxLength(50);
+
             builder.OwnsOne(x => x.ShipToAddress, x =>
             {
                 x.WithOwner();
