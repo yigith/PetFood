@@ -18,9 +18,9 @@
                         @item.ProductName
                     </td>
                     <td>
-                        <input type="number" class="form-control quantity" min="0" size="3" value="@item.Quantity" />
+                        <input type="number" class="form-control quantity" min="1" max="999" step="1" size="3" value="@item.Quantity" data-update-quantity="@item.ProductId" />
                     </td>
-                    <td>
+                    <td data-product-price="@item.ProductId">
                         @string.Format("${0:0.00}", item.Quantity * item.UnitPrice)
                     </td>
                 </tr>
@@ -35,7 +35,10 @@
                     <i class="fas fa-shopping-basket"></i>
                 </div>
                 <h2 class="text-center mb-5 mt-3">
-                    Total: @string.Format("${0:0.00}", Model.Total())
+                    Total: 
+                    <span class="totalPrice">
+                        @string.Format("${0:0.00}", Model.Total())
+                    </span>
                 </h2>
                 <a asp-controller="Home" asp-action="Index" class="btn btn-warning btn-block">Continue to Shopping</a>
                 <a asp-controller="Basket" asp-action="Checkout" class="btn btn-success btn-block">Proceed to Checkout</a>
@@ -43,3 +46,32 @@
         </div>
     </div>
 </div>
+
+@section scripts {
+    <script>
+        $("input[data-update-quantity]").on("input", function (event) {
+            // in case of copy/paste
+            if (this.value < 1) this.value = 1;
+
+            var productId = $(this).data("update-quantity");
+            var quantity = this.value;
+
+            $.ajax({
+                url: "@Url.Action("UpdateQuantity", "Basket")",
+                type: "POST",
+                data: { productId: productId, quantity: quantity },
+                success: function (data) {
+                    // update total price
+                    $(".totalPrice").text(data.totalPrice);
+                    $('[data-product-price="' + productId + '"]').text(data.productPrice);
+                }
+            });
+        });
+
+        // the user cannot input negative/decimal numbers
+        $("input[data-update-quantity]").on("keydown", function (event) {
+            if (event.key === "." || event.key === "," || event.key === "-")
+                event.preventDefault();
+        });
+    </script>
+}

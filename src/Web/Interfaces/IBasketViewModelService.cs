@@ -10,5 +10,6 @@ namespace Web.Interfaces
     {
         Task<BasketViewModel> GetBasket(string userId);
         Task<ProductViewModel> GetProductDetails(int productId);
+        Task<BasketUpdateQuantityViewModel> UpdateQuantity(string userId, int productId, int quantity);
     }
 }

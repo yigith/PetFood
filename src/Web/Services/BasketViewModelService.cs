@@ -69,5 +69,18 @@ namespace Web.Services
                 Price = product.Price
             };
         }
+
+        public async Task<BasketUpdateQuantityViewModel> UpdateQuantity(string userId, int productId, int quantity)
+        {
+            var basket = await _basketRepository.FirstOrDefaultAsync(new BasketWithItemsSpecification(userId));
+            var basketItem = basket.Items.FirstOrDefault(x => x.ProductId == productId);
+            basketItem.Quantity = quantity;
+            await _basketRepository.UpdateAsync(basket);
+            return new BasketUpdateQuantityViewModel()
+            {
+                ProductPrice = string.Format("${0:0.00}", basketItem.UnitPrice * basketItem.Quantity),
+                TotalPrice = string.Format("${0:0.00}", basket.Items.Sum(x => x.UnitPrice * x.Quantity))
+            };
+        }
     }
 }
