@@ -94,3 +94,12 @@ body {
 .toast-top-right {
     top: 69px;
 }
+
+/* FORM VALIDATION */
+span.field-validation-error {
+    color: var(--danger);
+}
+
+input.input-validation-error {
+    border: 1px solid var(--danger);
+}

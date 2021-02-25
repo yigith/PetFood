@@ -66,6 +66,12 @@ namespace Web.Controllers
             return View();
         }
 
+        [HttpPost, ValidateAntiForgeryToken]
+        public async Task<IActionResult> Checkout(CheckoutViewModel vm)
+        {
+            return View();
+        }
+
         private string GetOrCreateUserId()
         {
             if (_signInManager.IsSignedIn(User))
