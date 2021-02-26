@@ -32,6 +32,10 @@ namespace Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            // by adding this, now we can access httpcontext via injection.
+            // https://docs.microsoft.com/en-us/aspnet/core/fundamentals/http-context?view=aspnetcore-5.0#use-httpcontext-from-custom-components
+            services.AddHttpContextAccessor();
+
             services.AddDbContext<PetFoodContext>(options =>
                 options.UseNpgsql(
                     Configuration.GetConnectionString("PetFoodConnection")));
@@ -48,6 +52,7 @@ namespace Web
 
             services.AddScoped(typeof(IAsyncRepository<>), typeof(EFRepository<>));
             services.AddScoped<IBasketService, BasketService>();
+            services.AddScoped<IOrderService, OrderService>();
             services.AddScoped<IHomeIndexViewModelService, HomeIndexViewModelService>();
             services.AddScoped<IBasketViewModelService, BasketViewModelService>();
         }

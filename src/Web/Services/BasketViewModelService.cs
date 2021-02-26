@@ -1,6 +1,9 @@
 ﻿using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
 using ApplicationCore.Specifications;
+using Infrastructure.Identity;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,12 +18,16 @@ namespace Web.Services
         private readonly IAsyncRepository<Product> _productRepository;
         private readonly IBasketService _basketService;
         private readonly IAsyncRepository<Basket> _basketRepository;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public BasketViewModelService(IAsyncRepository<Product> productRepository, IBasketService basketService, IAsyncRepository<Basket> basketRepository)
+        public BasketViewModelService(IAsyncRepository<Product> productRepository, IBasketService basketService, IAsyncRepository<Basket> basketRepository, IHttpContextAccessor httpContextAccessor, UserManager<ApplicationUser> userManager)
         {
             _productRepository = productRepository;
             _basketService = basketService;
             _basketRepository = basketRepository;
+            _httpContextAccessor = httpContextAccessor;
+            _userManager = userManager;
         }
 
         public async Task<BasketViewModel> GetBasket(string userId)
@@ -68,6 +75,17 @@ namespace Web.Services
                 PictureUri = product.PictureUri,
                 Price = product.Price
             };
+        }
+
+        public async Task TransferBasketAsync(string userName)
+        {
+            var anonymousId = _httpContextAccessor.HttpContext.Request.Cookies[Constants.BASKET_COOKIENAME];
+            if (anonymousId == null) return;
+
+            // find user by username (=email)
+            var user = await _userManager.FindByNameAsync(userName);
+            await _basketService.TransferBasketAsync(anonymousId, user.Id);
+            _httpContextAccessor.HttpContext.Response.Cookies.Delete(Constants.BASKET_COOKIENAME);
         }
 
         public async Task<BasketUpdateQuantityViewModel> UpdateQuantity(string userId, int productId, int quantity)

@@ -15,7 +15,7 @@ namespace Infrastructure.Data.Config
         {
             builder.Property(x => x.ProductName)
                 .IsRequired()
-                .HasMaxLength(50);
+                .HasMaxLength(100);
         }
     }
 }

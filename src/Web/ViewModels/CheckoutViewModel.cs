@@ -70,5 +70,9 @@ namespace Web.ViewModels
 
         [Display(Name = "Payment Total")]
         public decimal PaymentTotal { get; set; }
+
+        public int BasketId { get; set; }
+
+        public string BasketItemsJson { get; set; }
     }
 }
