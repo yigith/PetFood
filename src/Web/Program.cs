@@ -1,4 +1,5 @@
 using Infrastructure.Data;
+using Infrastructure.Identity;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,7 +20,13 @@ namespace Web
 
             using (var scope = host.Services.CreateScope())
             {
+                var appIdentityDbContext = scope.ServiceProvider.GetRequiredService<AppIdentityDbContext>();
                 var petFoodContext = scope.ServiceProvider.GetRequiredService<PetFoodContext>();
+
+                // create database if not exists
+                await appIdentityDbContext.Database.EnsureCreatedAsync();
+                await petFoodContext.Database.EnsureCreatedAsync();
+
                 await PetFoodContextSeed.SeedAsync(petFoodContext);
             }
 

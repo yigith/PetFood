@@ -22,9 +22,12 @@ namespace Web
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        private readonly IWebHostEnvironment _currentEnvironment;
+
+        public Startup(IConfiguration configuration, IWebHostEnvironment env)
         {
             Configuration = configuration;
+            _currentEnvironment = env;
         }
 
         public IConfiguration Configuration { get; }
@@ -36,13 +39,26 @@ namespace Web
             // https://docs.microsoft.com/en-us/aspnet/core/fundamentals/http-context?view=aspnetcore-5.0#use-httpcontext-from-custom-components
             services.AddHttpContextAccessor();
 
-            services.AddDbContext<PetFoodContext>(options =>
-                options.UseNpgsql(
-                    Configuration.GetConnectionString("PetFoodConnection")));
+            if (_currentEnvironment.IsDevelopment())
+            {
+                services.AddDbContext<PetFoodContext>(options =>
+                    options.UseNpgsql(
+                        Configuration.GetConnectionString("PetFoodConnection")));
 
-            services.AddDbContext<AppIdentityDbContext>(options =>
-                options.UseNpgsql(
-                    Configuration.GetConnectionString("IdentityConnection")));
+                services.AddDbContext<AppIdentityDbContext>(options =>
+                    options.UseNpgsql(
+                        Configuration.GetConnectionString("IdentityConnection")));
+            }
+            else
+            {
+                services.AddDbContext<PetFoodContext>(options =>
+                    options.UseSqlServer(
+                        Configuration.GetConnectionString("PetFoodConnection")));
+
+                services.AddDbContext<AppIdentityDbContext>(options =>
+                    options.UseSqlServer(
+                        Configuration.GetConnectionString("IdentityConnection")));
+            }
             services.AddDatabaseDeveloperPageExceptionFilter();
 
             services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = false)
